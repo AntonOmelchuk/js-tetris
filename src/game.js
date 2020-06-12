@@ -12,13 +12,13 @@ export default class Game {
   move(direction) {
     switch(direction) {
       case 'ArrowRight':
-        this.activePiece.x += 1
+        this.activePiece.x + 1 !== 10 && (this.activePiece.x += 1)
         break
       case 'ArrowLeft':
-        this.activePiece.x -= 1
+        this.activePiece.x - 1 !== -1 && (this.activePiece.x -= 1)
         break
       case 'ArrowDown':
-        this.activePiece.y += 1
+        this.activePiece.y + 1 !== 20 && (this.activePiece.y += 1)
         break
     }
   }
