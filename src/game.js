@@ -6,7 +6,11 @@ export default class Game {
   activePiece = {
     x: 0,
     y: 0,
-    blocks: []
+    blocks: [
+      [0, 1, 0],
+      [1, 1, 1],
+      [0, 0, 0],
+    ]
   }
 
   move(direction) {
@@ -20,6 +24,16 @@ export default class Game {
       case 'ArrowDown':
         this.activePiece.y + 1 !== 20 && (this.activePiece.y += 1)
         break
+    }
+  }
+
+  lockPiece() {
+    const { x: pieceX, y: pieceY, blocks } = this.activePiece
+
+    for(let y = 0; y < blocks.length; y++) {
+      for(let x = 0; x < blocks[y].length; x++) {
+        this.playfield[pieceY + y][pieceX + x] = blocks[y][x]
+      }
     }
   }
 }
