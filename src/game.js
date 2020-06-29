@@ -21,7 +21,7 @@ export default class Game {
         if(this.checkPiecePosition()) {
           this.activePiece.x -= 1
           return this.lockPiece()
-        } 
+        }
 
         break
       case 'ArrowLeft':
@@ -30,7 +30,7 @@ export default class Game {
         if(this.checkPiecePosition()) {
           this.activePiece.x += 1
           return this.lockPiece()
-        } 
+        }
 
         break
       case 'ArrowDown':
@@ -39,7 +39,7 @@ export default class Game {
         if(this.checkPiecePosition()) {
           this.activePiece.y -= 1
           return this.lockPiece()
-        } 
+        }
 
         break
     }
@@ -52,13 +52,13 @@ export default class Game {
     for(let y = 0; y < blocks.length; y++) {
       for(let x = 0; x < blocks[y].length; x++) {
         if(
-            blocks[y][x] && 
+            blocks[y][x] &&
             ((playfield[pieceY + y] === undefined || playfield[pieceY][pieceX + x] === undefined) ||
             playfield[pieceY + y][pieceX + x])
           ) {
             return true
           }
-          
+
       }
     }
 
