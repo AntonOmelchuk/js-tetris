@@ -2,63 +2,122 @@ export default class Game {
   score = 0
   lines = 0
   level = 0
-  playfield = new Array(20).fill().map(col => col = new Array(10).fill(0))
+  // playfield = new Array(20).fill().map(col => col = new Array(10).fill(0))
+  playfield = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ]
   activePiece = {
     x: 0,
     y: 0,
     blocks: [
       [0, 1, 0],
       [1, 1, 1],
-      [0, 0, 0],
+      [0, 0, 0]
     ]
   }
 
-  move(direction) {
-    switch(direction) {
-      case 'ArrowRight':
-        this.activePiece.x += 1
+  getState() {
+    const playfield = [...this.playfield]
 
-        if(this.checkPiecePosition()) {
-          this.activePiece.x -= 1
-          return this.lockPiece()
-        } 
+    for(let y = 0; y < this.activePiece.blocks.length; y++) {
+      for(let x = 0; x < this.activePiece.blocks[y].length; x++) {
+        if(this.activePiece.blocks[y][x]) {
+          playfield[this.activePiece.y + y][this.activePiece.x + x] = this.activePiece.blocks[y][x]
+        }
+      }
+    }
 
-        break
-      case 'ArrowLeft':
-        this.activePiece.x -= 1
+    return playfield
+  }
 
-        if(this.checkPiecePosition()) {
-          this.activePiece.x += 1
-          return this.lockPiece()
-        } 
+  movePieceLeft() {
+    this.activePiece.x -= 1
 
-        break
-      case 'ArrowDown':
-        this.activePiece.y += 1
-
-        if(this.checkPiecePosition()) {
-          this.activePiece.y -= 1
-          return this.lockPiece()
-        } 
-
-        break
+    if(this.hasCollision()) {
+      this.activePiece.x += 1
     }
   }
 
-  checkPiecePosition() {
-    const playfield = this.playfield
+  movePieceRight() {
+    this.activePiece.x += 1
+
+    if(this.hasCollision()) {
+      this.activePiece.x -= 1
+    }
+  }
+
+  movePieceDown() {
+    this.activePiece.y += 1
+
+    if(this.hasCollision()) {
+      this.activePiece.y -= 1
+      this.lockPiece()
+    }
+  }
+
+  rotatePiece() {
+    this.rotateBlocks()
+
+    if(this.hasCollision()) {
+      this.rotateBlocks(false)
+    }
+  }
+
+  rotateBlocks(clockwise = true) {
+    const blocks = this.activePiece.blocks
+    const length = blocks.length
+    const x = Math.floor(length / 2)
+    const y = length - 1
+
+    for (let i = 0; i < x; i++) {
+      for (let j = i; j < y - i; j++) {
+        const temp = blocks[i][j]
+
+        if(clockwise) {
+          blocks[i][j] = blocks[y - j][i]
+          blocks[y - j][i] = blocks[y - i][y - j]
+          blocks[y - i][y - j] = blocks[j][y - i]
+          blocks[j][y - i] = temp
+        } else {
+          blocks[i][j] = blocks[j][y - i]
+          blocks[j][y - i] = blocks[y - i][y - j]
+          blocks[y - i][y - j] = blocks[y - j][i]
+          blocks[y - j][i] = temp
+        }
+      }
+    }
+  }
+
+  hasCollision() {
     const { y: pieceY, x: pieceX, blocks } = this.activePiece
 
     for(let y = 0; y < blocks.length; y++) {
       for(let x = 0; x < blocks[y].length; x++) {
-        if(
-            blocks[y][x] && 
-            ((playfield[pieceY + y] === undefined || playfield[pieceY][pieceX + x] === undefined) ||
-            playfield[pieceY + y][pieceX + x])
+        if(blocks[y][x]
+          && ((this.playfield[pieceY + y] === undefined || this.playfield[pieceY + y][pieceX + x] === undefined)
+          || this.playfield[pieceY + y][pieceX + x])
           ) {
-            return true
-          }
-          
+          return true
+        }
       }
     }
 
@@ -67,6 +126,7 @@ export default class Game {
 
   lockPiece() {
     const { y: pieceY, x: pieceX, blocks } = this.activePiece
+
     for(let y = 0; y < blocks.length; y++) {
       for(let x = 0; x < blocks[y].length; x++) {
         if(blocks[y][x]) {
