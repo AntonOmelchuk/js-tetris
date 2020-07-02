@@ -15,6 +15,15 @@ export default class View {
     this.el.appendChild(this.canvas)
   }
 
+  render(playfield) {
+    this.clearScreen()
+    this.renderPlayfield(playfield)
+  }
+
+  clearScreen() {
+    this.context.clearRect(0, 0, this.width, this.height)
+  }
+
   renderPlayfield(playfield) {
     for(let y = 0; y < playfield.length; y++) {
       const line = playfield[y]
@@ -22,13 +31,17 @@ export default class View {
         const block = line[x]
 
         if(block) {
-          this.context.fillStyle = 'red'
-          this.context.strokeStyle = 'black'
-          this.context.lineWidth = 2
-
-          this.context.fillRect(x * this.blockWidth, y * this.blockHeight, this.blockWidth, this.blockHeight)
+          this.renderBlock(x * this.blockWidth, y * this.blockHeight, this.blockWidth, this.blockHeight, 'red')
         }
       }
     }
+  }
+
+  renderBlock(x, y, width, height, color) {
+    this.context.fillStyle = color
+    this.context.strokeStyle = 'black'
+    this.context.lineWidth = 2
+
+    this.context.fillRect(x, y, width, height)
   }
 }
