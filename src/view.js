@@ -53,5 +53,6 @@ export default class View {
     this.context.lineWidth = 2
 
     this.context.fillRect(x, y, width, height)
+    this.context.strokeRect(x, y, width, height)
   }
 }

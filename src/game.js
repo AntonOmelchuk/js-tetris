@@ -1,4 +1,11 @@
 export default class Game {
+  static poitns = {
+    1: 40,
+    2: 100,
+    3: 300,
+    4: 1200
+  }
+
   score = 0
   lines = 0
   level = 0
@@ -130,8 +137,11 @@ export default class Game {
     this.activePiece.y += 1
 
     if(this.hasCollision()) {
+      const clearedLines = this.clearLines()
       this.activePiece.y -= 1
       this.lockPiece()
+      this.clearLines()
+      this.updateScore(clearedLines)
       this.updatePieces()
     }
   }
@@ -195,6 +205,44 @@ export default class Game {
           this.playfield[pieceY + y][pieceX + x] = blocks[y][x]
         }
       }
+    }
+  }
+
+  clearLines() {
+    const rows = 20
+    const columns = 10
+    const lines = []
+
+    for(let y = rows - 1; y >= 0; y--) {
+      let numberOfblocks = 0
+
+      for(let x = 0; x < columns; x++) {
+        if(this.playfield[y][x]) {
+          numberOfblocks++
+        }
+      }
+
+      if(numberOfblocks === 0) {
+        break
+      } else if(numberOfblocks < columns) {
+        continue
+      } else if(numberOfblocks === columns) {
+        lines.unshift(y)
+      }
+    }
+
+    for(let index of lines) {
+      this.playfield.splice(index, 1)
+      this.playfield.unshift(new Array(columns).fill(0))
+    }
+
+    return lines.length
+  }
+
+  updateScore(clearedLines) {
+    if(clearedLines > 0) {
+      this.score += Game.poitns[clearedLines]
+      this.lines += clearedLines
     }
   }
 
