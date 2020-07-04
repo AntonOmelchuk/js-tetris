@@ -8,10 +8,13 @@ export default class Game {
 
   score = 0
   lines = 0
-  level = 0
   playfield = new Array(20).fill().map(col => col = new Array(10).fill(0))
   activePiece = this.createPiece()
   nextPiece = this.createPiece()
+
+  get level() {
+    return Math.floor(this.lines * 0.1)
+  }
 
   getState() {
     const playfield = this.createPlayfield()
@@ -33,7 +36,13 @@ export default class Game {
       }
     }
 
-    return playfield
+    return {
+      score: this.score,
+      level: this.level,
+      lines: this.lines,
+      nextPiece: this.nextPiece,
+      playfield
+    }
   }
 
   createPlayfield() {
@@ -241,7 +250,7 @@ export default class Game {
 
   updateScore(clearedLines) {
     if(clearedLines > 0) {
-      this.score += Game.poitns[clearedLines]
+      this.score += Game.poitns[clearedLines] * (this.level + 1)
       this.lines += clearedLines
     }
   }

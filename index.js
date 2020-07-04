@@ -4,7 +4,7 @@ import View from './src/view.js'
 const root = document.getElementById('root')
 
 const game = new Game()
-const view = new View(root, 320, 640, 20, 10)
+const view = new View(root, 480, 640, 20, 10)
 
 window.game = game
 window.view = view
@@ -30,4 +30,4 @@ document.addEventListener('keydown', event => {
   }
 })
 
-view.render(game.playfield)
+view.render(game.getState())
