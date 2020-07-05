@@ -6,6 +6,8 @@ export default class Controller {
     this.isPlaying = false
 
     document.addEventListener('keydown', this.handleKeyDown.bind(this))
+    document.addEventListener('keyup', this.handleKeyUp.bind(this))
+
 
     this.view.renderStartScreen()
   }
@@ -27,13 +29,27 @@ export default class Controller {
     this.update()
   }
 
+  reset(){
+    this.game.reset()
+    this.play()
+  }
+
   updateView() {
-    this.view.renderMainScreen(this.game.getState())
+    const state = this.game.getState()
+    if(state.isGameOver) {
+      this.view.renderGameOverScreen(state.score)
+    } else if(!this.isPlaying) {
+      this.view.renderPauseScreen()
+    } else {
+      this.view.renderMainScreen(this.game.getState())
+    }
   }
 
   startTimer() {
+    const speed = 1000 - this.game.getState().level * 100
+
     if(!this.intervalId) {
-      this.intervalId = setInterval(() => this.update(), 1000)
+      this.intervalId = setInterval(() => this.update(), speed > 0 ? speed : 100)
     }
   }
 
@@ -45,8 +61,12 @@ export default class Controller {
   }
 
   handleKeyDown(event) {
+    const state = this.game.getState()
     switch(event.keyCode) {
       case 13:
+        if(state.isGameOver) {
+          this.reset()
+        }
         if(this.isPlaying) {
           this.pause()
         } else {
@@ -55,17 +75,27 @@ export default class Controller {
         break
       case 37:
         this.game.movePieceLeft()
-        this.view.renderMainScreen(this.game.getState())
+        this.updateView()
         break
       case 38:
         this.game.rotatePiece()
-        this.view.renderMainScreen(this.game.getState())
+        this.updateView()
         break
       case 39:
         this.game.movePieceRight()
-        this.view.renderMainScreen(this.game.getState())
+        this.updateView()
         break
       case 40:
+        this.stopTimer()
+        this.update()
+        break
+    }
+  }
+
+  handleKeyUp(event) {
+    switch(event.keyCode) {
+      case 40:
+        this.startTimer()
         this.update()
         break
     }
